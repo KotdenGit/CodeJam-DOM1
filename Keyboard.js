@@ -59,14 +59,14 @@ const Keyboard = {
             "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "enter",
             "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "done",
             "Ru/En", "caps", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?",
-            " ", "˅", "˄", "˂", ">"
+            "del", " ", "˅", "˄", "˂", ">"
         ];
         const keyLayoutRu = [
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "backspace",
             "й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "enter",
             "ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э", "done", 
             "Ru/En", "caps","я", "ч", "с", "м", "и", "т", "ь", "б", "ю", ".",
-            " ", "˅", "˄", "˂", ">"
+            "del", " ", "˅", "˄", "˂", ">"
         ];
         let keyLayout = keyLayoutRu;
 
@@ -101,7 +101,7 @@ const Keyboard = {
 
                     break;
 
-                case "delete":
+                case "del":
                     keyElement.classList.add("keyboard__key--wide");
                     keyElement.innerHTML = createIconHTML("delete");
     
