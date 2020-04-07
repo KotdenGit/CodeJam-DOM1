@@ -1,3 +1,10 @@
+//document.body.onload = addElement;
+//let foldText = null;
+//function addElement() {
+   // console.log('Hi')
+    //foldText = document.createElement("h1");
+    //document.querySelector("textarea").classList.add("use-keyboard-input");
+//}
 const Keyboard = {
     elements: {
         main: null,
@@ -17,10 +24,13 @@ const Keyboard = {
 
     init() {
         // Create main elements
+        this.textFeld = document.createElement("textarea");
         this.elements.main = document.createElement("div");
         this.elements.keysContainer = document.createElement("div");
+        
 
         // Setup main elements
+        this.textFeld.classList.add("use-keyboard-input");
         this.elements.main.classList.add("keyboard", "keyboard--hidden");
         this.elements.keysContainer.classList.add("keyboard__keys");
         this.elements.keysContainer.appendChild(this._createKeys());
@@ -28,6 +38,7 @@ const Keyboard = {
         this.elements.keys = this.elements.keysContainer.querySelectorAll(".keyboard__key");
 
         // Add to DOM
+        document.body.appendChild(this.textFeld);
         this.elements.main.appendChild(this.elements.keysContainer);
         document.body.appendChild(this.elements.main);
 
@@ -43,26 +54,40 @@ const Keyboard = {
 
     _createKeys() {
         const fragment = document.createDocumentFragment();
-        const keyLayout = [
+        const keyLayoutEn = [
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "backspace",
-            "q", "w", "e", "r", "t", "y", "u", "i", "o", "p",
-            "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", "enter",
-            "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?",
-            "space"
+            "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "enter",
+            "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "done",
+            "Ru/En", "caps", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?",
+            " ", "˅", "˄", "˂", ">"
         ];
+        const keyLayoutRu = [
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "backspace",
+            "й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "enter",
+            "ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э", "done", 
+            "Ru/En", "caps","я", "ч", "с", "м", "и", "т", "ь", "б", "ю", ".",
+            " ", "˅", "˄", "˂", ">"
+        ];
+        let keyLayout = keyLayoutRu;
 
         // Creates HTML for an icon
         const createIconHTML = (icon_name) => {
             return `<i class="material-icons">${icon_name}</i>`;
         };
 
+
+        //Add func push the button on keyboard
+
+
         keyLayout.forEach(key => {
             const keyElement = document.createElement("button");
-            const insertLineBreak = ["backspace", "p", "enter", "?"].indexOf(key) !== -1;
+            const insertLineBreak = ["backspace", "done", "enter", "?"].indexOf(key) !== -1;
 
             // Add attributes/classes
             keyElement.setAttribute("type", "button");
             keyElement.classList.add("keyboard__key");
+
+            
 
             switch (key) {
                 case "backspace":
@@ -76,6 +101,17 @@ const Keyboard = {
 
                     break;
 
+                case "delete":
+                    keyElement.classList.add("keyboard__key--wide");
+                    keyElement.innerHTML = createIconHTML("delete");
+    
+                    keyElement.addEventListener("click", () => {
+                        this.properties.value = this.properties.value = this.properties.value.slice(1);
+                        this._triggerEvent("oninput");
+                    });
+    
+                    break;    
+                    
                 case "caps":
                     keyElement.classList.add("keyboard__key--wide", "keyboard__key--activatable");
                     keyElement.innerHTML = createIconHTML("keyboard_capslock");
@@ -98,7 +134,7 @@ const Keyboard = {
 
                     break;
 
-                case "space":
+                case " ":
                     keyElement.classList.add("keyboard__key--extra-wide");
                     keyElement.innerHTML = createIconHTML("space_bar");
 
@@ -120,6 +156,22 @@ const Keyboard = {
 
                     break;
 
+                 case "Ru/En":
+                    keyElement.classList.add("keyboard__key--wide");
+                    keyElement.innerHTML = createIconHTML("language");
+    
+                    keyElement.addEventListener("click", () => {
+                        keyLayout == keyLayoutRu ? keyLayout = keyLayoutEn : keyLayout = keyLayoutRu;
+                        //console.log(keyElement.textContent);
+                        //console.log(document.querySelector("keyboard__key"));
+                        console.log(keyLayout);
+                        //document.querySelectorAll("keyboard__key").forEach(function (element) 
+                        
+                        this._toggleLanguage(keyLayout);
+                    });
+                    
+                    break;    
+
                 default:
                     keyElement.textContent = key.toLowerCase();
 
@@ -140,6 +192,20 @@ const Keyboard = {
 
         return fragment;
     },
+ 
+    _toggleLanguage(keyChange) {
+        let i = 0;
+        for (let key of this.elements.keys) {
+            let keyVal = key.textContent;
+            if (keyVal !== "backspace"){
+                key.textContent = keyChange[i];
+                key.textContent = this.properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
+                i = i+1;
+            }else{
+                i = i+1;
+            }
+        }
+    },
 
     _triggerEvent(handlerName) {
         if (typeof this.eventHandlers[handlerName] == "function") {
@@ -155,7 +221,7 @@ const Keyboard = {
                 key.textContent = this.properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
             }
         }
-    },
+    }, 
 
     open(initialValue, oninput, onclose) {
         this.properties.value = initialValue || "";
